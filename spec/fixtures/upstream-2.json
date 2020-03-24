@@ -1,0 +1,57 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Sample API",
+      "description": "API description in Markdown.",
+      "version": "1.0.0"
+    },
+    "host": "api.example.com",
+    "basePath": "/v1",
+    "schemes": [
+      "https"
+    ],
+    "paths": {
+      "/admin-users": {
+        "get": {
+          "summary": "Returns a list of admin users.",
+          "description": "Optional extended description in Markdown.",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            }
+          }
+        }
+      },
+      "/ignore-me/admin-users": {
+        "get": {
+          "summary": "Returns a list of admin users.",
+          "description": "Optional extended description in Markdown.",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            }
+          }
+        }
+      },
+      "/ignore2-me/admin-users": {
+        "get": {
+          "summary": "Returns a list of admin users.",
+          "description": "Optional extended description in Markdown.",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            }
+          }
+        }
+      }
+    }
+  }
