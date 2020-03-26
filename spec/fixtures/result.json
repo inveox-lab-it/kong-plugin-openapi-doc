@@ -35,7 +35,12 @@
           "description": "Find out more about our store",
           "url": "http://swagger.io"
         }
-      }
+      },
+      {
+        "name": "should-be-here",
+        "description": "Everything about ignoring"
+        }
+        
     ],
     "schemes": [
       "http",
@@ -187,6 +192,9 @@
       },
       "/admin-users": {
         "get": {
+          "tags": [
+            "should-be-here"
+          ],
           "summary": "Returns a list of admin users.",
           "description": "Optional extended description in Markdown.",
           "produces": [

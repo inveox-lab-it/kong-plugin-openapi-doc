@@ -1,10 +1,13 @@
 local http = require 'resty.http'
 local insert = table.insert
 local cjson = require('cjson.safe').new()
+local utils = require('kong.tools.utils')
 
 local sub = ngx.re.sub
 local gsub = ngx.re.gsub
 local match = ngx.re.match
+local table_contains = utils.table_contains
+local table_concat = utils.concat
 cjson.decode_array_with_array_mt(true)
 
 local API_KEYS = {'securityDefinitions'}
@@ -37,13 +40,15 @@ local function should_add_path(conf, path)
   return true
 end
 
-local function process_tags(doc, api, tags)
+local function process_tags(doc, api, tags, to_remove)
   if tags then
     for i = 1, #tags do
-      if api.prefix then
-        tags[i].name = api.prefix .. tags[i].name
+      if table_contains(to_remove, tags[i].name) == false then
+        if api.prefix then
+          tags[i].name = api.prefix .. tags[i].name
+        end
+        insert(doc.tags, tags[i])
       end
-      insert(doc.tags, tags[i])
     end
   end
 end
@@ -63,8 +68,31 @@ local function add_prefix_path_object(value, api_prefix)
   return value
 end
 
-local function process_paths(conf, api, doc, paths)
+local function propagate_path_remove(path, dest)
+  for _, data in pairs(path) do
+    if data.tags then
+      for _, tag in ipairs(data.tags) do
+        insert(dest, tag)
+      end
+    end
+  end
+end
 
+local function get_tags_from_path(path)
+  local dest = {}
+  for _, data in pairs(path) do
+    if data.tags then
+      for _, tag in ipairs(data.tags) do
+        insert(dest, tag)
+      end
+    end
+  end
+  return dest
+end
+
+local function process_paths(conf, api, doc, paths)
+  local tags_to_remove = {}
+  local tags_to_leave = {}
   if paths then
     local api_prefix = api.prefix
     for name, value in pairs(paths) do
@@ -76,9 +104,21 @@ local function process_paths(conf, api, doc, paths)
             value = add_prefix_path_object(value, api_prefix)
           end
           doc.paths[name] = value
+          tags_to_leave = table_concat(tags_to_leave, get_tags_from_path(value))
+        else
+          propagate_path_remove(value, tags_to_remove)
         end
     end
   end
+
+  -- if tag occure more then 1 time and it used by path that is not removed
+  -- it should not be removed as well
+  for i = 1, #tags_to_remove do
+    if table_contains(tags_to_leave, tags_to_remove[i]) then
+      tags_to_remove[i] = nil
+    end
+  end
+  return tags_to_remove
 end
 
 local function  add_prefix_to_definitions(body, api)
@@ -174,8 +214,8 @@ local function handle_api_doc(conf)
       return nil, 'unable to parse json from ' .. api.url
     end
 
-    process_tags(doc, api, api_res.tags)
-    process_paths(conf, api, doc, api_res.paths)
+    local to_remove = process_paths(conf, api, doc, api_res.paths)
+    process_tags(doc, api, api_res.tags, to_remove)
     process_definitions(api, doc, api_res.definitions)
     process_rest(doc, api_res)
   end

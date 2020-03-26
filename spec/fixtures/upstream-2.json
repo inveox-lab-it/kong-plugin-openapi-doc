@@ -10,9 +10,25 @@
     "schemes": [
       "https"
     ],
+    "tags": [
+      {
+        "name": "ignore-admin-tag",
+        "description": "Everything about ignoring",
+        "externalDocs": {
+          "description": "Find out more",
+          "url": "http://swagger.io"
+          }
+        },
+        {
+        "name": "should-be-here",
+        "description": "Everything about ignoring"
+        }],
     "paths": {
       "/admin-users": {
         "get": {
+          "tags": [
+            "should-be-here"
+          ],
           "summary": "Returns a list of admin users.",
           "description": "Optional extended description in Markdown.",
           "produces": [
@@ -27,6 +43,9 @@
       },
       "/ignore-me/admin-users": {
         "get": {
+          "tags": [
+            "ignore-admin-tag"
+          ],
           "summary": "Returns a list of admin users.",
           "description": "Optional extended description in Markdown.",
           "produces": [
@@ -41,7 +60,11 @@
       },
       "/ignore2-me/admin-users": {
         "get": {
-          "summary": "Returns a list of admin users.",
+          "tags": [
+            "ignore-admin-tag",
+            "should-be-here"
+          ],
+            "summary": "Returns a list of admin users.",
           "description": "Optional extended description in Markdown.",
           "produces": [
             "application/json"
