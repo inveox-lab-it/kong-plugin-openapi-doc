@@ -127,7 +127,7 @@ local function  add_prefix_to_definitions(body, api)
     kong.log.err('Unable to replace definitions', err, ' for ', api.prefix)
     return nil, err
   end
-  new_body, _, err  = gsub(new_body, [[«([a-zA-Z0-9]+)»]], api.prefix .. '$1', 'io')
+  new_body, _, err  = gsub(new_body, [[«([a-zA-Z0-9]+)»]], '«' .. api.prefix .. '$1»' , 'io')
   if err then
     kong.log.err('Unable to replace definitions', err, ' for ', api.prefix)
     return nil, err
