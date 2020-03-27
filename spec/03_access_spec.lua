@@ -118,6 +118,26 @@ describe("Plugin: openapi-doc access features: whitelist, definitions rewrite", 
     assert.same(expected, json)
   end)
 
+  it("should merge swagger doc - array", function()
+    upstream = http_server_with_body(upstream_port, 'spec/fixtures/upstream-1-array.json')
+    service_a = http_server_with_body(service_a_port, 'spec/fixtures/upstream-2.json')
+    helpers.wait_until(function()
+      return service_a:alive() and upstream:alive()
+    end, 1)
+
+    local res = proxy_client:get("/v2/api-docs", {
+      headers = {
+        host = "service.test",
+        ["Content-Type"] = "application/json",
+      },
+    })
+    local body = assert.res_status(200, res)
+    local json = cjson.decode(body)
+    local expected = cjson.decode(read_all('spec/fixtures/result_whitelist_def_replace_array.json'))
+    assert.same(expected, json)
+  end)
+
+
 end)
 
 -- vim: filetype=lua:expandtab:shiftwidth=2:tabstop=4:softtabstop=2:textwidth=80
