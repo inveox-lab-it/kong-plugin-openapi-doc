@@ -135,6 +135,19 @@ local function  add_prefix_to_definitions(body, api)
   return new_body, nil
 end
 
+local function  replace_body(body, api)
+  local new_body = body
+  local err = nil
+  for _, v in ipairs(api.body_transform) do
+    new_body, _, err  = gsub(new_body, v.regexp, v.replace, 'jo')
+    if err then
+      kong.log.err('Unable to replace body ', err, ' for ', v.regexp, ' ', v.replace)
+      return nil, err
+    end
+  end
+  return new_body, err
+end
+
 local function process_definitions(api, doc, definitions )
   if definitions then
     for name, value in pairs(definitions) do
@@ -218,6 +231,17 @@ local function handle_api_doc(conf)
     process_tags(doc, api, api_res.tags, to_remove)
     process_definitions(api, doc, api_res.definitions)
     process_rest(doc, api_res)
+    if api.body_transform then
+      local api_doc_body = cjson.encode(doc)
+      local new_body, err = replace_body(api_doc_body, api)
+      if err then
+        return nil, err
+      end
+      doc = cjson.decode(new_body)
+      if not doc then
+        return nil, 'unable to decode body after body_transform'
+      end
+    end
   end
   return doc, nil
 end
