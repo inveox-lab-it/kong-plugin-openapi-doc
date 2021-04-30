@@ -63,8 +63,18 @@ return {
                         { regexp = { type = "string"}},
                         { replace = { type = "string"}}
                       }
+                    }},
+                    { body_transform = {
+                      type = "array",
+                      elements = {
+                        type = "record",
+                        fields = {
+                          { regexp = { type = "string"}},
+                          { replace = { type = "string"}}
+                        }
+                      }
                     }}
-                }}
+                  }}
         }},
         { handler_path = { type = "string", default = "/v2/api-docs"}},
         { ignored_paths = {

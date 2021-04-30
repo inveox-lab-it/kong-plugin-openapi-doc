@@ -1,0 +1,337 @@
+{
+	"host": "service.test",
+	"tags": [{
+		"externalDocs": {
+			"url": "http://swagger.io",
+			"description": "Find out more"
+		},
+		"name": "api_prefix_cat",
+		"description": "Everything aboutq your Pets"
+	}, {
+		"name": "api_prefix_store",
+		"description": "Access to Petstore orders"
+	}, {
+		"externalDocs": {
+			"url": "http://swagger.io",
+			"description": "Find out more about our store"
+		},
+		"name": "api_prefix_user",
+		"description": "Operations about user"
+	}, {
+		"description": "Everything about ignoring",
+		"name": "should-be-here"
+	}],
+	"securityDefinitions": {
+		"petstore_auth": {
+			"flow": "implicit",
+			"authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+			"type": "oauth2",
+			"scopes": {
+				"read:pets": "read your pets",
+				"write:pets": "modify pets in your account"
+			}
+		},
+		"api_key": {
+			"in": "header",
+			"name": "api_key",
+			"type": "apiKey"
+		}
+	},
+	"basePath": "/v1",
+	"schemes": ["http", "https"],
+	"definitions": {
+		"api_prefix_Tag": {
+			"xml": {
+				"name": "Tag"
+			},
+			"properties": {
+				"id": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"type": "object"
+		},
+		"api_prefix_Order": {
+			"xml": {
+				"name": "Order"
+			},
+			"properties": {
+				"quantity": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"petId": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"id": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"shipDate": {
+					"type": "string",
+					"format": "date-time"
+				},
+				"status": {
+					"description": "Order Status",
+					"enum": ["placed", "approved", "delivered"],
+					"type": "string"
+				},
+				"complete": {
+					"default": false,
+					"type": "boolean"
+				}
+			},
+			"type": "object"
+		},
+		"api_prefix_Category": {
+			"xml": {
+				"name": "Category"
+			},
+			"properties": {
+				"id": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"name": {
+					"type": "string"
+				}
+			},
+			"type": "object"
+		},
+		"api_prefix_Cat": {
+			"xml": {
+				"name": "Pet"
+			},
+			"properties": {
+				"photoUrls": {
+					"xml": {
+						"wrapped": true,
+						"name": "photoUrl"
+					},
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"id": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"tags": {
+					"xml": {
+						"wrapped": true,
+						"name": "tag"
+					},
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/api_prefix_Tag"
+					}
+				},
+				"name": {
+					"example": "doggie",
+					"type": "string"
+				},
+				"category": {
+					"$ref": "#/definitions/api_prefix_Category"
+				},
+				"status": {
+					"description": "pet status in the store",
+					"enum": ["available", "pending", "sold"],
+					"type": "string"
+				}
+			},
+			"required": ["name", "photoUrls"],
+			"type": "object"
+		},
+		"api_prefix_User": {
+			"xml": {
+				"name": "User"
+			},
+			"title": "api_prefix_User",
+			"properties": {
+				"firstName": {
+					"type": "string"
+				},
+				"username": {
+					"type": "string"
+				},
+				"lastName": {
+					"type": "string"
+				},
+				"id": {
+					"type": "integer",
+					"format": "int64"
+				},
+				"email": {
+					"type": "string"
+				},
+				"phone": {
+					"type": "string"
+				},
+				"password": {
+					"type": "string"
+				},
+				"userStatus": {
+					"format": "int32",
+					"description": "User Status",
+					"type": "integer"
+				}
+			},
+			"type": "object"
+		},
+		"api_prefix_ApiResponse": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"type": "string"
+				},
+				"message": {
+					"type": "string"
+				},
+				"code": {
+					"type": "integer",
+					"format": "int32"
+				}
+			}
+		}
+	},
+	"info": {
+		"title": "Swagger Petstore",
+		"description": "api testy",
+		"contact": {
+			"email": "apiteam@swagger.io"
+		},
+		"license": {
+			"url": "http://www.apache.org/licenses/LICENSE-2.0.html",
+			"name": "Apache 2.0"
+		},
+		"termsOfService": "http://swagger.io/terms/",
+		"version": "1.0.0"
+	},
+	"paths": {
+		"/admin-users": {
+			"get": {
+				"summary": "Returns a list of admin users.",
+				"description": "Optional extended description in Markdown.",
+				"tags": ["should-be-here"],
+				"produces": ["application/json"],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				}
+			}
+		},
+		"/pet/findByStatus": {
+			"get": {
+				"description": "Multiple status values can be provided with comma separated strings",
+				"tags": ["api_prefix_cat"],
+				"summary": "Finds Pets by status",
+				"operationId": "api_prefix_findPetsByStatus",
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/api_prefix_Cat"
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid status value"
+					}
+				},
+				"security": [{
+					"petstore_auth": ["write:pets", "read:pets"]
+				}],
+				"produces": ["application/xml", "application/json"],
+				"parameters": [{
+					"description": "Status values that need to be considered for filter",
+					"items": {
+						"enum": ["available", "pending", "sold"],
+						"default": "available",
+						"type": "string"
+					},
+					"required": true,
+					"in": "query",
+					"name": "status",
+					"collectionFormat": "multi",
+					"type": "array"
+				}]
+			}
+		},
+		"/pet": {
+			"post": {
+				"summary": "Add a new pet to the store",
+				"operationId": "api_prefix_addPet",
+				"tags": ["api_prefix_cat"],
+				"security": [{
+					"petstore_auth": ["write:pets", "read:pets"]
+				}],
+				"produces": ["application/xml", "application/json"],
+				"parameters": [{
+					"required": true,
+					"in": "body",
+					"name": "body",
+					"description": "Pet object that needs to be added to the store",
+					"schema": {
+						"$ref": "#/definitions/api_prefix_Cat"
+					}
+				}, {
+					"required": true,
+					"in": "body",
+					"name": "body",
+					"description": "Pet object that needs to be added to the store",
+					"schema": {
+						"$ref": "#/definitions/api_prefix_Array«api_prefix_Cat»"
+					}
+				}],
+				"consumes": ["application/json", "application/xml"],
+				"description": "",
+				"responses": {
+					"405": {
+						"description": "Invalid input"
+					}
+				}
+			},
+			"put": {
+				"summary": "Update an existing pet",
+				"operationId": "api_prefix_updatePet",
+				"tags": ["api_prefix_cat"],
+				"security": [{
+					"petstore_auth": ["write:pets", "read:pets"]
+				}],
+				"produces": ["application/xml", "application/json"],
+				"parameters": [{
+					"required": true,
+					"in": "body",
+					"name": "body",
+					"description": "Pet object that needs to be added to the store",
+					"schema": {
+						"$ref": "#/definitions/api_prefix_Cat"
+					}
+				}],
+				"consumes": ["application/json", "application/xml"],
+				"description": "",
+				"responses": {
+					"400": {
+						"description": "Invalid ID supplied"
+					},
+					"405": {
+						"description": "Validation exception"
+					},
+					"404": {
+						"description": "Pet not found"
+					}
+				}
+			}
+		}
+	},
+	"swagger": "2.0"
+}
