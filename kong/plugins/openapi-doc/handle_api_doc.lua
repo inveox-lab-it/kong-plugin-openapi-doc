@@ -2,6 +2,7 @@ local http = require 'resty.http'
 local insert = table.insert
 local cjson = require('cjson.safe').new()
 local utils = require('kong.tools.utils')
+local common_plugin_status, common_plugin_headers = pcall(require, 'kong.plugins.common.headers')
 
 local sub = ngx.re.sub
 local gsub = ngx.re.gsub
@@ -198,8 +199,13 @@ local function handle_api_doc(conf)
   for i = 1, #apis do
     local api = apis[i]
     client:set_timeouts(http_config.connect_timeout, http_config.send_timeout, http_config.read_timeout)
+    local req_headers = nil
+    if common_plugin_status then
+      req_headers = common_plugin_headers.get_upstream_headers(kong.request.get_headers())
+    end
     local res, err = client:request_uri(api.url, {
       method = 'GET',
+      headers = req_headers,
     })
     client:set_keepalive(http_config.keepalive_timeout, http_config.keepalive_pool_size)
 
