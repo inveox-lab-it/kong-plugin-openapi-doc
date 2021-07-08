@@ -201,7 +201,7 @@ local function handle_api_doc(conf)
     client:set_timeouts(http_config.connect_timeout, http_config.send_timeout, http_config.read_timeout)
     local req_headers = nil
     if common_plugin_status then
-      req_headers = common_plugin_headers.get_upstream_headers(kong.request.get_headers())
+      req_headers = common_plugin_headers.get_upstream_headers(kong.request)
     end
     local res, err = client:request_uri(api.url, {
       method = 'GET',
