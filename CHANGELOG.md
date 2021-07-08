@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/inveox-lab-it/kong-plugin-openapi-doc/compare/1.1.0...1.2.0) (2021-07-08)
+
+
+### Features
+
+* pass request headers to upstreams - fix tracking by jeager ([22ae628](https://github.com/inveox-lab-it/kong-plugin-openapi-doc/commit/22ae628bfe307cef17ead2c45b16bcad7190bbc3))
+
 # [1.1.0](https://github.com/inveox-lab-it/kong-plugin-openapi-doc/compare/1.0.0...1.1.0) (2021-04-30)
 
 
