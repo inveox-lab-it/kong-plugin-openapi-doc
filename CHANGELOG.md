@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/inveox-lab-it/kong-plugin-openapi-doc/compare/1.2.0...1.3.0) (2021-07-08)
+
+
+### Features
+
+* rewrite method use req instead of table ([73f3313](https://github.com/inveox-lab-it/kong-plugin-openapi-doc/commit/73f3313def42919c26aa958a184d8d7e4fa6e640))
+
 # [1.2.0](https://github.com/inveox-lab-it/kong-plugin-openapi-doc/compare/1.1.0...1.2.0) (2021-07-08)
 
 
