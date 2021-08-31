@@ -19,7 +19,7 @@
 		"description": "Operations about user"
 	}, {
 		"description": "Everything about ignoring",
-		"name": "should-be-here"
+		"name": "api2_prefix_should-be-here"
 	}],
 	"securityDefinitions": {
 		"petstore_auth": {
@@ -218,7 +218,7 @@
 			"get": {
 				"summary": "Returns a list of admin users.",
 				"description": "Optional extended description in Markdown.",
-				"tags": ["should-be-here"],
+				"tags": ["api2_prefix_should-be-here"],
 				"produces": ["application/json"],
 				"responses": {
 					"200": {
