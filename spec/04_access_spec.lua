@@ -75,13 +75,6 @@ describe("Plugin: openapi-doc access features: body_transform", function()
           },
           {
             url = 'http://' .. helpers.mock_upstream_host .. ':' .. service_a_port,
-            prefix = 'api2_prefix_',
-            body_transform = {
-              {
-                regexp = "api2_prefix_Order",
-                replace = "api_prefix_Order"
-              }
-            }
           }
         }
       }
@@ -132,25 +125,6 @@ describe("Plugin: openapi-doc access features: body_transform", function()
     local body = assert.res_status(200, res)
     local json = cjson.decode(body)
     local expected = cjson.decode(read_all('spec/fixtures/result_whitelist_def_replace_body_transform.json'))
-    assert.same(expected, json)
-  end)
-
-  it("should merge swagger doc with duplication of definition", function()
-    upstream = http_server_with_body(upstream_port, 'spec/fixtures/upstream-1.json')
-    service_a = http_server_with_body(service_a_port, 'spec/fixtures/upstream-2-dup-definition.json')
-    helpers.wait_until(function()
-      return service_a:alive() and upstream:alive()
-    end, 1)
-
-    local res = proxy_client:get("/v2/api-docs", {
-      headers = {
-        host = "service.test",
-        ["Content-Type"] = "application/json",
-      },
-    })
-    local body = assert.res_status(200, res)
-    local json = cjson.decode(body)
-    local expected = cjson.decode(read_all('spec/fixtures/result_whitelist_def_replace-dup-definition.json'))
     assert.same(expected, json)
   end)
 
