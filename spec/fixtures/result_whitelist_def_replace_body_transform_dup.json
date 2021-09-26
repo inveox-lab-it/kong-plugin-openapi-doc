@@ -221,9 +221,15 @@
 				"tags": ["api2_prefix_should-be-here"],
 				"produces": ["application/json"],
 				"responses": {
-					"200": {
-						"description": "OK"
-					}
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/api_prefix_Order"
+              }
+            }
+          }
 				}
 			}
 		},
