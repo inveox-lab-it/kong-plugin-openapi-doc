@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/inveox-lab-it/kong-plugin-openapi-doc/compare/1.3.0...1.3.1) (2021-09-27)
+
+
+### Bug Fixes
+
+* **dup:** [LIT03-1051] properly populate duplicated definitions in open api ([dcc5708](https://github.com/inveox-lab-it/kong-plugin-openapi-doc/commit/dcc5708e44bf0334a7eaacf0b0b09c2693e564df))
+
 # [1.3.0](https://github.com/inveox-lab-it/kong-plugin-openapi-doc/compare/1.2.0...1.3.0) (2021-07-08)
 
 
