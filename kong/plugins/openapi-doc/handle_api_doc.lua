@@ -12,6 +12,7 @@ local table_concat = utils.concat
 cjson.decode_array_with_array_mt(true)
 
 local API_KEYS = {'securityDefinitions'}
+local MERGE_KEYS = {'paths', 'definitions', 'securityDefinitions'}
 
 local function rewrite_path(api_conf, name)
   if api_conf.regexp then
@@ -94,8 +95,8 @@ end
 local function process_paths(conf, api, doc, paths)
   local tags_to_remove = {}
   local tags_to_leave = {}
+  local api_prefix = api.prefix
   if paths then
-    local api_prefix = api.prefix
     for name, value in pairs(paths) do
         if should_add_path(conf, name)  then
           if api.rewrite_path then
@@ -116,6 +117,9 @@ local function process_paths(conf, api, doc, paths)
   -- it should not be removed as well
   for i = 1, #tags_to_remove do
     if table_contains(tags_to_leave, tags_to_remove[i]) then
+      tags_to_remove[i] = nil
+    end
+    if api_prefix and table_contains(tags_to_leave, api_prefix .. tags_to_remove[i]) then
       tags_to_remove[i] = nil
     end
   end
@@ -163,19 +167,34 @@ local function process_definitions(api, doc, definitions )
   end
 end
 
-local function process_rest(doc, api_res)
-  for i = 1, #API_KEYS do
-    local key = API_KEYS[i]
+local function process_merge(doc, api_res, api_keys)
+  for i = 1, #api_keys do
+    local key = api_keys[i]
     if not doc[key] then
       doc[key] = {}
     end
     if api_res[key] then
       local key_value = api_res[key]
       for name, value in pairs(key_value) do
+        if doc[key][name] == nil then
           doc[key][name] = value
+        end
       end
     end
   end
+end
+
+local function process_rest(doc, api_res)
+  process_merge(doc, api_res, API_KEYS)
+end
+
+local function merge_doc(doc, temp_doc)
+  if temp_doc.tags then
+    for i = 1, #temp_doc.tags do
+      insert(doc.tags, temp_doc.tags[i])
+    end
+  end
+  process_merge(doc, temp_doc, MERGE_KEYS)
 end
 
 local function handle_api_doc(conf)
@@ -233,21 +252,27 @@ local function handle_api_doc(conf)
       return nil, 'unable to parse json from ' .. api.url
     end
 
-    local to_remove = process_paths(conf, api, doc, api_res.paths)
-    process_tags(doc, api, api_res.tags, to_remove)
-    process_definitions(api, doc, api_res.definitions)
-    process_rest(doc, api_res)
+    local temp_doc = {
+      tags = {},
+      paths = {},
+      definitions = {},
+    }
+    local to_remove = process_paths(conf, api, temp_doc, api_res.paths)
+    process_tags(temp_doc, api, api_res.tags, to_remove)
+    process_definitions(api, temp_doc, api_res.definitions)
+    process_rest(temp_doc, api_res)
     if api.body_transform then
-      local api_doc_body = cjson.encode(doc)
+      local api_doc_body = cjson.encode(temp_doc)
       local new_body, err = replace_body(api_doc_body, api)
       if err then
         return nil, err
       end
-      doc = cjson.decode(new_body)
-      if not doc then
+      temp_doc = cjson.decode(new_body)
+      if not temp_doc then
         return nil, 'unable to decode body after body_transform'
       end
     end
+    merge_doc(doc, temp_doc)
   end
   return doc, nil
 end
